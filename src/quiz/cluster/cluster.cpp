@@ -75,16 +75,49 @@ void render2DTree(Node* node, pcl::visualization::PCLVisualizer::Ptr& viewer, Bo
 
 }
 
-std::vector<std::vector<int>> euclideanCluster(const std::vector<std::vector<float>>& points, KdTree* tree, float distanceTol)
+
+void clusterHelper(int indice, const std::vector<std::vector<float>> points, std::vector<int>& cluster,std::vector<bool>& processed,KdTree* tree, float distanceTol)
+{
+	processed[indice] = true;
+	cluster.push_back(indice);
+
+	std::vector<int> nearest = tree -> search(points[indice], distanceTol);
+
+	for(int id:nearest)
+	{
+		if(!processed[id])
+			clusterHelper(id, points, cluster, processed, tree, distanceTol);
+	}
+
+}
+std::vector<std::vector<int>> euclideanCluster(const std::vector<std::vector<float>> points, KdTree* tree, float distanceTol)
 {
 
 	// TODO: Fill out this function to return list of indices for each cluster
 
 	std::vector<std::vector<int>> clusters;
- 
+	
+	std::vector<bool> processed(points.size(), false); //Keep track which point has been processed
+
+
+	int i = 0;
+	while (i < points.size())
+	{
+		if (processed[i])
+		{
+			i++;
+			continue;
+		}
+
+		std::vector<int> cluster; //if not processed, creat a new cluster 
+		clusterHelper(i, points, cluster, processed, tree, distanceTol);
+		clusters.push_back(cluster); //
+
+	}
 	return clusters;
 
 }
+
 
 int main ()
 {
@@ -115,14 +148,14 @@ int main ()
   	std::cout << "Test Search" << std::endl;
   	std::vector<int> nearby = tree->search({-6,7},3.0);
   	for(int index : nearby)
-      std::cout << index << ",";
+	  	std::cout << index << ",";
   	std::cout << std::endl;
 
   	// Time segmentation process
   	auto startTime = std::chrono::steady_clock::now();
   	//
   	std::vector<std::vector<int>> clusters = euclideanCluster(points, tree, 3.0);
-  	//
+  	// //
   	auto endTime = std::chrono::steady_clock::now();
   	auto elapsedTime = std::chrono::duration_cast<std::chrono::milliseconds>(endTime - startTime);
   	std::cout << "clustering found " << clusters.size() << " and took " << elapsedTime.count() << " milliseconds" << std::endl;
