@@ -1,6 +1,6 @@
 # Sensor Fusion Self-Driving Car Course
 
-<img src="https://github.com/noplaxochia/UD_SF_Lidar1/media/ezgif.com-video-to-gif.gif" width="700" height="400" />
+<img src="https://github.com/noplaxochia/UD_SF_Lidar1/blob/master/media/ezgif.com-video-to-gif.gif" width="700" height="400" />
 
 ### Welcome to the Sensor Fusion course for self-driving cars.
 
